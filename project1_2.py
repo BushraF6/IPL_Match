@@ -1,28 +1,23 @@
+""" Import required modules to solve the problem. """
 import matplotlib.pyplot as plt
-import csv
+import mains
 
-with open('deliveries.csv','r', encoding='utf-8') as deliveries_file:
-    batsman_list=[]
-    batsman_runs_list=[]
-    batsman_runs=[]
-    deliveries_reader= csv.DictReader(deliveries_file)
-    for deliveries in deliveries_reader:
-        if deliveries['batting_team']=='Royal Challengers Bangalore':
-            if deliveries['batsman'] not in batsman_list :
-                batsman_list.append(deliveries['batsman'])
-            batsman_runs_list.append([deliveries['batsman'],deliveries['batsman_runs']])
-    for batsman in batsman_list:
-        sums=0
-        for batsman1 in batsman_runs_list:
-            if batsman1[0]==batsman:
-                sums+=int(batsman1[1])
-        batsman_runs.append(sums)
-    batsman= {k: v for k, v in zip(batsman_list, batsman_runs)}
-    batsman= dict(sorted(batsman.items(), key=lambda x:x[1], reverse=True))
-    top10_batsman=list(batsman)[:10]
-    top10_runs=list(batsman.values())[:10]
-    print(top10_batsman)
-    print(top10_runs)
-
-plt.barh(top10_batsman,top10_runs)
+deliveries = mains.deliveries_reader
+# Create dictionary of batsmans with their total runs as values.
+batsman_runs = {}
+# Calculating runs scored by batsmans of Royal Challengers Bangalore team.
+for delivery in deliveries:
+    if delivery['batting_team'] == 'Royal Challengers Bangalore':
+        if delivery['batsman'] not in batsman_runs:
+            batsman_runs[delivery['batsman']] = 0
+        batsman_runs[delivery['batsman']] += int(delivery['total_runs'])
+# Sorting batsman_runs dictionary according to the values i.e. runs.
+batsman = dict(sorted(batsman_runs.items(), key=lambda x: x[1], reverse=True))
+# Creating 2 lists of top 10 batsmans and their total runs.
+top10_batsman = list(batsman)[:10]
+top10_runs = list(batsman.values())[:10]
+# PLotting the calculated data.
+plt.barh(top10_batsman, top10_runs)
+plt.ylabel('Top 10 Batsmans')
+plt.xlabel('Runs_Scored')
 plt.show()
